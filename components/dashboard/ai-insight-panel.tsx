@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
-import { Brain, AlertTriangle, CheckCircle, Info, TrendingUp, Zap, RefreshCw } from "lucide-react"
+import { Brain, AlertTriangle, CheckCircle, Info, TrendingUp, Zap, RefreshCw, Snowflake, Flame } from "lucide-react"
 
 type AlertLevel = "critical" | "warning" | "info" | "positive"
+type SeasonPhase = "off-season" | "in-season"
 
 interface Insight {
   id: number
@@ -46,7 +46,7 @@ const insights: Insight[] = [
     athlete: "Alexei Volkov",
     metric: "RPE",
     message: "RPE trending ≥ 7 for 4 consecutive sessions. Perceived exertion inconsistent with planned load.",
-    recommendation: "Review sleep quality data. Recommend magnesium supplementation and reduced evening intensity.",
+    recommendation: "Review sleep quality data. Streprogen engine suggests reducing volume by 15% for next block.",
     time: "07:30",
   },
   {
@@ -55,7 +55,7 @@ const insights: Insight[] = [
     athlete: "Marcus Lindqvist",
     metric: "HRV",
     message: "HRV 74ms — highest reading in 14 days. Readiness score: 91/100. Peak performance window.",
-    recommendation: "Clear for full-intensity afternoon session. Consider additional PP unit reps.",
+    recommendation: "Clear for full-intensity afternoon session. Streprogen optimized for hyper-acceleration drills.",
     time: "07:20",
   },
   {
@@ -64,17 +64,8 @@ const insights: Insight[] = [
     athlete: "Jake Perreault",
     metric: "Load",
     message: "ACWR stable at 1.03 — optimal training zone maintained for 10 consecutive days.",
-    recommendation: "Continue current periodization plan. Cross-sport conditioning window opens next week.",
+    recommendation: "Continue current periodization plan. Streprogen strength phase transitions in 4 days.",
     time: "07:15",
-  },
-  {
-    id: 6,
-    level: "warning",
-    athlete: "Connor Walsh",
-    metric: "Sleep",
-    message: "Sleep efficiency 71% (below 80% threshold). HRV 72ms — borderline suppression.",
-    recommendation: "Monitor RPE closely during afternoon session. Limit to 80% effort ceiling.",
-    time: "07:08",
   },
 ]
 
@@ -138,8 +129,9 @@ function TypingText({ text, speed = 12 }: { text: string; speed?: number }) {
 
 export function AIInsightPanel() {
   const [refreshing, setRefreshing] = useState(false)
-  const [timestamp, setTimestamp] = useState("05:28 · 07:42 AM")
+  const [timestamp, setTimestamp] = useState("05/28 · 07:42 AM")
   const [animateFirst, setAnimateFirst] = useState(false)
+  const [phase, setPhase] = useState<SeasonPhase>("in-season")
 
   const criticalCount = insights.filter((i) => i.level === "critical").length
   const warningCount = insights.filter((i) => i.level === "warning").length
@@ -168,18 +160,18 @@ export function AIInsightPanel() {
             </CardTitle>
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5">
-              {criticalCount > 0 && (
-                <span className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-[oklch(0.60_0.22_25/0.15)] text-[10px] font-bold text-[oklch(0.60_0.22_25)] border border-[oklch(0.60_0.22_25/0.3)]">
-                  {criticalCount} ALERT{criticalCount > 1 ? "S" : ""}
-                </span>
+            <button
+              onClick={() => setPhase(phase === "in-season" ? "off-season" : "in-season")}
+              className={cn(
+                "flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold transition-all",
+                phase === "in-season"
+                  ? "bg-[oklch(0.68_0.16_218/0.15)] text-primary border border-primary/30"
+                  : "bg-[oklch(0.72_0.18_70/0.12)] text-[oklch(0.72_0.18_70)] border border-[oklch(0.72_0.18_70/0.3)]"
               )}
-              {warningCount > 0 && (
-                <span className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-[oklch(0.72_0.18_70/0.12)] text-[10px] font-bold text-[oklch(0.72_0.18_70)] border border-[oklch(0.72_0.18_70/0.3)]">
-                  {warningCount} WARN
-                </span>
-              )}
-            </div>
+            >
+              {phase === "in-season" ? <Snowflake className="w-2.5 h-2.5" /> : <Flame className="w-2.5 h-2.5" />}
+              {phase.toUpperCase()}
+            </button>
             <button
               onClick={handleRefresh}
               className="p-1 rounded hover:bg-accent transition-colors"
@@ -193,7 +185,7 @@ export function AIInsightPanel() {
         <div className="flex items-center gap-2 mt-2">
           <Zap className="w-3 h-3 text-primary" />
           <span className="text-[10px] text-muted-foreground font-mono">
-            Real-time biometric analysis · {timestamp}
+            Streprogen analysis · {timestamp}
           </span>
           <span className="ml-auto flex items-center gap-1 text-[10px] text-[oklch(0.62_0.17_152)]">
             <span className="w-1.5 h-1.5 rounded-full bg-[oklch(0.62_0.17_152)] animate-pulse" />
@@ -202,6 +194,13 @@ export function AIInsightPanel() {
         </div>
       </CardHeader>
       <CardContent className="p-3 space-y-2 max-h-[400px] overflow-y-auto">
+        <div className="mb-2 p-2 rounded bg-muted/50 border border-border">
+          <p className="text-[10px] text-muted-foreground leading-tight">
+            <span className="font-bold text-foreground">Phase Focus:</span> {phase === "in-season"
+              ? "Tactical maintenance, speed preservation, and active recovery. ACWR threshold: 1.3."
+              : "Hypertrophy, maximum strength, and metabolic conditioning. ACWR threshold: 1.6."}
+          </p>
+        </div>
         {insights.map((insight, idx) => {
           const cfg = levelConfig[insight.level]
           const Icon = cfg.icon

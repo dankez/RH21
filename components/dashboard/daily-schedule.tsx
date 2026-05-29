@@ -2,9 +2,9 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-import { Calendar, Dumbbell, Utensils, Zap, Wind, Clock } from "lucide-react"
+import { Calendar, Dumbbell, Utensils, Zap, Wind, Clock, Trophy } from "lucide-react"
 
-type SessionType = "gym" | "onice" | "meal" | "recovery" | "meeting"
+type SessionType = "gym" | "onice" | "meal" | "recovery" | "meeting" | "game"
 
 interface Session {
   time: string
@@ -15,82 +15,69 @@ interface Session {
   detail?: string
 }
 
-const schedule: Session[] = [
-  {
-    time: "06:00",
-    label: "Morning Skate",
-    duration: "75 min",
-    type: "onice",
-    athletes: "Full Squad",
-    detail: "Systems + PP/PK units",
-  },
-  {
-    time: "07:30",
-    label: "Post-Skate Nutrition",
-    duration: "30 min",
-    type: "meal",
-    detail: "Protein shake + carb reload",
-  },
+const inSeasonSchedule: Session[] = [
   {
     time: "09:00",
-    label: "Strength & Conditioning",
-    duration: "60 min",
-    type: "gym",
-    athletes: "Defense + Forwards",
-    detail: "Lower body hypertrophy",
+    label: "Morning Skate",
+    duration: "45 min",
+    type: "onice",
+    athletes: "Full Squad",
+    detail: "Pre-game activation + PP/PK",
   },
   {
     time: "10:30",
-    label: "Recovery & Mobility",
-    duration: "45 min",
-    type: "recovery",
-    athletes: "Johansson, Braun",
-    detail: "Pool + contrast therapy",
-  },
-  {
-    time: "12:30",
-    label: "Team Lunch",
-    duration: "45 min",
-    type: "meal",
-    detail: "High-carb pre-afternoon",
-  },
-  {
-    time: "14:00",
-    label: "Tactical Video Session",
+    label: "Team Meeting",
     duration: "30 min",
     type: "meeting",
-    athletes: "Full Squad",
-    detail: "Opponent breakdown",
+    detail: "Opponent scouting report",
   },
   {
-    time: "15:00",
-    label: "Afternoon Ice Practice",
-    duration: "90 min",
-    type: "onice",
-    athletes: "Full Squad",
-    detail: "5v5 Battle drills + Breakouts",
-  },
-  {
-    time: "17:00",
-    label: "Recovery Nutrition",
-    duration: "20 min",
-    type: "meal",
-    detail: "BCAAs + electrolytes",
-  },
-  {
-    time: "17:30",
-    label: "Cold Plunge / Cryo",
-    duration: "20 min",
-    type: "recovery",
-    athletes: "Full Squad",
-    detail: "3 min @ 10°C",
-  },
-  {
-    time: "19:30",
-    label: "Evening Meal",
+    time: "12:00",
+    label: "Pre-Game Meal",
     duration: "45 min",
     type: "meal",
-    detail: "Recovery-focused dinner",
+    detail: "High carb, low fiber",
+  },
+  {
+    time: "19:00",
+    label: "GAME vs RANGERS",
+    duration: "150 min",
+    type: "game",
+    athletes: "Full Squad",
+    detail: "Madison Square Garden",
+  },
+]
+
+const offSeasonSchedule: Session[] = [
+  {
+    time: "07:00",
+    label: "Streprogen Strength",
+    duration: "90 min",
+    type: "gym",
+    athletes: "Group A",
+    detail: "Back Squat + Accessory",
+  },
+  {
+    time: "09:30",
+    label: "Ice: Edge Work",
+    duration: "60 min",
+    type: "onice",
+    athletes: "Group A",
+    detail: "Individual skill development",
+  },
+  {
+    time: "11:30",
+    label: "Metabolic Conditioning",
+    duration: "45 min",
+    type: "gym",
+    detail: "Assault bike intervals",
+  },
+  {
+    time: "13:00",
+    label: "Recovery Nutrition",
+    duration: "30 min",
+    type: "meal",
+    detail: "40g Protein + BCAAs",
   },
 ]
 
@@ -130,22 +117,18 @@ const typeConfig: Record<SessionType, { icon: React.ElementType; color: string; 
     border: "border-l-[oklch(0.55_0.08_240)]",
     label: "Tactical",
   },
+  game: {
+    icon: Trophy,
+    color: "text-[oklch(0.60_0.22_25)]",
+    bg: "bg-[oklch(0.60_0.22_25/0.10)]",
+    border: "border-l-[oklch(0.60_0.22_25)]",
+    label: "Game",
+  },
 }
 
-const legendTypes: SessionType[] = ["onice", "gym", "meal", "recovery", "meeting"]
-
 export function DailySchedule() {
-  const now = new Date()
-  const currentHour = now.getHours()
-  const currentMin = now.getMinutes()
-  const currentTime = currentHour * 60 + currentMin
-
-  const isActive = (time: string, duration: string) => {
-    const [h, m] = time.split(":").map(Number)
-    const start = h * 60 + m
-    const durationMins = parseInt(duration)
-    return currentTime >= start && currentTime < start + durationMins
-  }
+  const isOffSeason = false // Simplified toggle for demo
+  const schedule = isOffSeason ? offSeasonSchedule : inSeasonSchedule
 
   return (
     <Card className="bg-card border-border">
@@ -154,18 +137,8 @@ export function DailySchedule() {
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-primary" />
             <CardTitle className="text-sm font-semibold text-foreground tracking-wider uppercase">
-              Daily Schedule
+              Daily Schedule {isOffSeason ? "(Off-Season)" : "(In-Season)"}
             </CardTitle>
-          </div>
-          <div className="flex items-center gap-1 flex-wrap">
-            {legendTypes.map((t) => {
-              const cfg = typeConfig[t]
-              return (
-                <div key={t} className={cn("flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px]", cfg.bg)}>
-                  <span className={cn("font-medium", cfg.color)}>{cfg.label}</span>
-                </div>
-              )
-            })}
           </div>
         </div>
       </CardHeader>
@@ -174,23 +147,18 @@ export function DailySchedule() {
           {schedule.map((session, i) => {
             const cfg = typeConfig[session.type]
             const Icon = cfg.icon
-            const active = isActive(session.time, session.duration)
             return (
               <div
                 key={i}
                 className={cn(
                   "flex items-start gap-3 p-2.5 rounded-lg border-l-2 transition-all",
                   cfg.bg,
-                  cfg.border,
-                  active ? "ring-1 ring-primary/30" : ""
+                  cfg.border
                 )}
               >
                 {/* Time */}
                 <div className="flex flex-col items-center shrink-0 w-10">
                   <span className="text-[10px] font-mono font-semibold text-foreground">{session.time}</span>
-                  {active && (
-                    <span className="mt-0.5 w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  )}
                 </div>
 
                 {/* Icon */}
