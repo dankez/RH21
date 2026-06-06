@@ -1,50 +1,17 @@
-"use client"
-
-import { useState } from "react"
-import { DashboardHeader } from "@/components/dashboard/dashboard-header"
-import { StatsBar } from "@/components/dashboard/stats-bar"
-import { AthleteOverview } from "@/components/dashboard/athlete-overview"
-import { LoadManagementChart } from "@/components/dashboard/load-management-chart"
-import { DailySchedule } from "@/components/dashboard/daily-schedule"
-import { AIInsightPanel } from "@/components/dashboard/ai-insight-panel"
-
-export default function DashboardPage() {
-  const [selectedAthleteId, setSelectedAthleteId] = useState(1)
-
+export default function Home() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <DashboardHeader />
-
-      <main className="p-4 space-y-4 max-w-[1600px] mx-auto">
-        {/* Stats Bar */}
-        <StatsBar />
-
-        {/* Main grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-[340px_1fr_300px] gap-4">
-          {/* Left: Athlete Overview */}
-          <div className="xl:row-span-2">
-            <AthleteOverview
-              selectedAthleteId={selectedAthleteId}
-              onSelectAthlete={setSelectedAthleteId}
-            />
-          </div>
-
-          {/* Center top: Load Management Chart */}
-          <div>
-            <LoadManagementChart selectedAthleteId={selectedAthleteId} />
-          </div>
-
-          {/* Right: AI Insight Panel */}
-          <div className="xl:row-span-2">
-            <AIInsightPanel />
-          </div>
-
-          {/* Center bottom: Daily Schedule */}
-          <div>
-            <DailySchedule />
-          </div>
-        </div>
-      </main>
-    </div>
+    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+      <h1 className="text-4xl font-bold text-[#003399]">XTB ETF Portfolio Copilot</h1>
+      <p className="mt-4 text-xl">Vitajte vo vašom investičnom asistentovi.</p>
+      <div className="mt-8 p-4 border rounded shadow bg-white max-w-md text-center">
+        <p className="text-sm text-gray-500 italic">
+          Poznámka: Tento projekt je v štádiu návrhu dizajnu. Pre zobrazenie vizuálov použite Stitch dashboard.
+        </p>
+      </div>
+      <footer className="mt-20 text-xs text-gray-400 text-center">
+        Nie je to licencované investičné poradenstvo.<br/>
+        Vytvorené pre slovenských retailových investorov.
+      </footer>
+    </main>
   )
 }
